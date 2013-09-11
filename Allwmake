@@ -52,6 +52,13 @@ wmakeCheckPwd "$WM_THIRD_PARTY_DIR" || {
 [ -n "$WM_CXXFLAGS" ]   &&  export CXXFLAGS="$WM_CXXFLAGS"
 [ -n "$WM_LDFLAGS" ]    &&  export LDFLAGS="$WM_LDFLAGS"
 
+if [ "$WM_ARCH_BASE" == "darwin" ]
+then
+    export WM_SO_EXTENSION=dylib
+else
+    export WM_SO_EXTENSION=so
+fi
+
 echo
 echo ========================================
 echo Start ThirdParty Allwmake
@@ -71,6 +78,10 @@ OPENMPI)
     elif [ -r $MPI_ARCH_PATH/lib${WM_COMPILER_LIB_ARCH}/libmpi.a ]
     then
         echo "    have $WM_MPLIB static library ($FOAM_MPI)"
+        echo
+    elif [ -r $MPI_ARCH_PATH/lib/libmpi.dylib ]
+    then
+  	echo "    have $WM_MPLIB shared Mac dylib"
         echo
     else
     (
@@ -187,10 +198,14 @@ echo "    $SCOTCH_ARCH_PATH"
 
 # this needs generalizing
 scotchMakefile=../../etc/wmakeFiles/scotch/Makefile.inc.i686_pc_linux2.shlib-OpenFOAM-$WM_ARCH_OPTION
+if [ "$WM_ARCH_BASE" == "darwin" ]
+    then
+    scotchMakefile=../../etc/wmakeFiles/scotch/Makefile.inc.i686_mac_darwin.shlib-OpenFOAM
+fi
 
 if [ -f $SCOTCH_ARCH_PATH/include/scotch.h \
-  -a -r $FOAM_EXT_LIBBIN/libscotch.so \
-  -a -r $FOAM_EXT_LIBBIN/libscotcherrexit.so ]
+  -a -r $FOAM_EXT_LIBBIN/libscotch.$WM_SO_EXTENSION \
+  -a -r $FOAM_EXT_LIBBIN/libscotcherrexit.$WM_SO_EXTENSION ]
 then
     echo "    scotch header in $SCOTCH_ARCH_PATH/include"
     echo "    scotch libs   in $FOAM_EXT_LIBBIN"
@@ -254,8 +269,8 @@ then
     echo
 
     if [ -f $SCOTCH_ARCH_PATH/include/$FOAM_MPI/ptscotch.h \
-      -a -r $FOAM_EXT_LIBBIN/$FOAM_MPI/libptscotch.so \
-      -a -r $FOAM_EXT_LIBBIN/$FOAM_MPI/libptscotcherrexit.so ]
+      -a -r $FOAM_EXT_LIBBIN/$FOAM_MPI/libptscotch.$WM_SO_EXTENSION \
+      -a -r $FOAM_EXT_LIBBIN/$FOAM_MPI/libptscotcherrexit.$WM_SO_EXTENSION ]
     then
         echo "    ptscotch header in $SCOTCH_ARCH_PATH/include/$FOAM_MPI"
         echo "    ptscotch libs   in $FOAM_EXT_LIBBIN/$FOAM_MPI"
