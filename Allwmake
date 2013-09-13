@@ -79,10 +79,9 @@ OPENMPI)
     then
         echo "    have $WM_MPLIB static library ($FOAM_MPI)"
         echo
-    elif [ -r $MPI_ARCH_PATH/lib/libmpi.dylib ]
-    then
-  	echo "    have $WM_MPLIB shared Mac dylib"
-        echo
+    elif [ -r $MPI_ARCH_PATH/lib${WM_COMPILER_LIB_ARCH}/libmpi.dylib ]
+    then  
+        echo "    have $WM_MPLIB shared Mac dylib"
     else
     (
         set -x
