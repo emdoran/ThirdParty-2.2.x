@@ -7,11 +7,11 @@ AR		= $(WM_CC)
 ARFLAGS		= -dynamiclib -undefined dynamic_lookup -o
 CAT		= cat
 CCS		= gcc
-CCP		= openmpicc
-CCD		= openmpicc
+CCP		= mpicc
+CCD		= mpicc
 CFLAGS		= -O3 -DCOMMON_FILE_COMPRESS_GZ -DCOMMON_RANDOM_FIXED_SEED -DSCOTCH_RENAME -DSCOTCH_RENAME_PARSER -Drestrict=__restrict -DCOMMON_TIMING_OLD
 CLIBFLAGS	= -fPIC
-LDFLAGS		= -lz -lm 
+LDFLAGS		= -lz -lm
 CP		= cp
 LEX		= flex -Pscotchyy -olex.yy.c
 LN		= ln

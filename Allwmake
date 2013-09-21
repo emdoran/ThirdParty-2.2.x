@@ -202,10 +202,17 @@ if [ "$WM_ARCH_BASE" == "darwin" ]
     scotchMakefile=../../etc/wmakeFiles/scotch/Makefile.inc.i686_mac_darwin.shlib-OpenFOAM
 fi
 
-if [ -f $SCOTCH_ARCH_PATH/include/scotch.h \
-  -a -r $FOAM_EXT_LIBBIN/libscotch.$WM_SO_EXTENSION \
-  -a -r $FOAM_EXT_LIBBIN/libscotcherrexit.$WM_SO_EXTENSION ]
-then
+if [ $SCOTCH_VERSION == "macports" ]; then
+    if [ -f $SCOTCH_ARCH_PATH/include/scotch.h \
+        -a -r $SCOTCH_ARCH_PATH/lib/libscotch.a \
+        -a -r $SCOTCH_ARCH_PATH/lib/libscotcherrexit.a ]; then
+        echo "    scotch header in $SCOTCH_ARCH_PATH/include"
+        echo "    scotch libs   in $SCOTCH_ARCH_PATH/lib"
+        echo
+    fi
+elif [ -f $SCOTCH_ARCH_PATH/include/scotch.h \
+    -a -r $FOAM_EXT_LIBBIN/lib/libscotch.$WM_SO_EXTENSION \
+    -a -r $FOAM_EXT_LIBBIN/lib/libscotcherrexit.$WM_SO_EXTENSION ]; then
     echo "    scotch header in $SCOTCH_ARCH_PATH/include"
     echo "    scotch libs   in $FOAM_EXT_LIBBIN"
     echo
@@ -239,12 +246,8 @@ else
 
     make realclean 2>/dev/null  # for safety
 
-    touch ../bin/daDummyFile
-
     make -j $WM_NCOMPPROCS $configEnv scotch \
     && make $configOpt install
-
-    rm -f $SCOTCH_ARCH_PATH/bin/daDummyFile
 
     # cleanup, could also remove Makefile.inc
     make realclean 2>/dev/null
@@ -267,10 +270,17 @@ then
     echo "    $SCOTCH_ARCH_PATH"
     echo
 
-    if [ -f $SCOTCH_ARCH_PATH/include/$FOAM_MPI/ptscotch.h \
-      -a -r $FOAM_EXT_LIBBIN/$FOAM_MPI/libptscotch.$WM_SO_EXTENSION \
-      -a -r $FOAM_EXT_LIBBIN/$FOAM_MPI/libptscotcherrexit.$WM_SO_EXTENSION ]
-    then
+    if [ $SCOTCH_VERSION == "macports" ]; then
+        if [ -f $SCOTCH_ARCH_PATH/include/ptscotch.h \
+            -a -r $SCOTCH_ARCH_PATH/lib/libptscotch.a \
+            -a -r $SCOTCH_ARCH_PATH/lib/libptscotcherrexit.a ]; then
+            echo "    ptscotch header in $SCOTCH_ARCH_PATH/include"
+            echo "    ptscotch libs   in $SCOTCH_ARCH_PATH/lib"
+            echo
+        fi
+    elif [ -f $SCOTCH_ARCH_PATH/include/$FOAM_MPI/ptscotch.h \
+        -a -r $FOAM_EXT_LIBBIN/$FOAM_MPI/libptscotch.$WM_SO_EXTENSION \
+        -a -r $FOAM_EXT_LIBBIN/$FOAM_MPI/libptscotcherrexit.$WM_SO_EXTENSION ]; then
         echo "    ptscotch header in $SCOTCH_ARCH_PATH/include/$FOAM_MPI"
         echo "    ptscotch libs   in $FOAM_EXT_LIBBIN/$FOAM_MPI"
         echo
@@ -305,12 +315,8 @@ then
 
         make realclean 2>/dev/null  # for safety
 
-        touch ../bin/aDummyFile
-
         make -j $WM_NCOMPPROCS $configEnv ptscotch \
         && make $configOpt install
-
-        rm -f $SCOTCH_ARCH_PATH/bin/aDummyFile
 
         # cleanup, could also remove Makefile.inc
         make realclean 2>/dev/null
@@ -318,7 +324,7 @@ then
     fi
 
     # verify existence of scotch include
-    [ -f $SCOTCH_ARCH_PATH/include/$FOAM_MPI/ptscotch.h ] || {
+    [ -f $SCOTCH_ARCH_PATH/include/$FOAM_MPI/ptscotch.h -o -f $SCOTCH_ARCH_PATH/include/ptscotch.h ] || {
         echo
         echo "    WARNING: required include file 'ptscotch.h' not found!"
         echo
